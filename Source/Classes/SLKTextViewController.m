@@ -88,6 +88,21 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
     return [self initWithTableViewStyle:UITableViewStylePlain];
 }
 
+- (instancetype)initWithChildCollectionController:(UICollectionViewController *)childCollectionController
+{
+    NSAssert([self class] != [SLKTextViewController class], @"Oops! You must subclass SLKTextViewController.");
+    
+    if (self = [super initWithNibName:nil bundle:nil])
+    {
+        _childCollectionController = childCollectionController;
+        
+        self.scrollViewProxy = childCollectionController.collectionView;
+        
+        [self _commonInit];
+    }
+    return self;
+}
+
 - (instancetype)initWithTableViewStyle:(UITableViewStyle)style
 {
     NSAssert([self class] != [SLKTextViewController class], @"Oops! You must subclass SLKTextViewController.");
@@ -167,8 +182,16 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
 - (void)loadView
 {
     [super loadView];
-        
-    [self.view addSubview:self.scrollViewProxy];
+    
+    if (_childCollectionController) {
+        [self addChildViewController:_childCollectionController];
+        [self.view addSubview:_childCollectionController.collectionView];
+        [_childCollectionController didMoveToParentViewController:self];
+    }
+    else {
+        [self.view addSubview:self.scrollViewProxy];
+    }
+    
     [self.view addSubview:self.autoCompletionView];
     [self.view addSubview:self.typingIndicatorView];
     [self.view addSubview:self.textInputbar];
@@ -251,6 +274,7 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
 
 - (UITableView *)tableViewWithStyle:(UITableViewStyle)style
 {
+    
     if (!_tableView)
     {
         _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:style];
