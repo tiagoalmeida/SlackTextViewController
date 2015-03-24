@@ -88,26 +88,12 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
     return [self initWithTableViewStyle:UITableViewStylePlain];
 }
 
-- (instancetype)initWithChildCollectionController:(UICollectionViewController *)childCollectionController
-{
-    NSAssert([self class] != [SLKTextViewController class], @"Oops! You must subclass SLKTextViewController.");
-    
-    if (self = [super initWithNibName:nil bundle:nil])
-    {
-        _childCollectionController = childCollectionController;
-        
-        self.scrollViewProxy = childCollectionController.collectionView;
-        
-        [self _commonInit];
-    }
-    return self;
-}
-
 - (instancetype)initWithTableViewStyle:(UITableViewStyle)style
 {
     NSAssert([self class] != [SLKTextViewController class], @"Oops! You must subclass SLKTextViewController.");
     
-    if (self = [super initWithNibName:nil bundle:nil])
+    self = [super initWithNibName:nil bundle:nil];
+    if (self)
     {
         self.scrollViewProxy = [self tableViewWithStyle:style];
         [self slk_commonInit];
@@ -119,7 +105,8 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
 {
     NSAssert([self class] != [SLKTextViewController class], @"Oops! You must subclass SLKTextViewController.");
     
-    if (self = [super initWithNibName:nil bundle:nil])
+    self = [super initWithNibName:nil bundle:nil];
+    if (self)
     {
         self.scrollViewProxy = [self collectionViewWithLayout:layout];
         [self slk_commonInit];
@@ -131,12 +118,29 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
 {
     NSAssert([self class] != [SLKTextViewController class], @"Oops! You must subclass SLKTextViewController.");
 
-    if (self = [super initWithNibName:nil bundle:nil])
+    self = [super initWithNibName:nil bundle:nil];
+    if (self)
     {
         _scrollView = scrollView;
-        _scrollView.translatesAutoresizingMaskIntoConstraints = NO; // Makes sure the scrollView plays nice with auto-layout
-
+        
         self.scrollViewProxy = _scrollView;
+        [self slk_commonInit];
+    }
+    return self;
+}
+
+- (instancetype)initWithChildViewController:(UIViewController *)childViewController
+{
+    NSAssert([self class] != [SLKTextViewController class], @"Oops! You must subclass SLKTextViewController.");
+    NSAssert(([self class] != [UITableViewController class] && [self class] != [UICollectionViewController class]), @"Oops! You must pass either a UITableViewController or UICollectionViewController instance.");
+    
+    self = [super initWithNibName:nil bundle:nil];
+    if (self)
+    {
+        _childViewController = childViewController;
+        
+        self.scrollViewProxy = (UIScrollView *)childViewController.view;
+        
         [self slk_commonInit];
     }
     return self;
@@ -146,7 +150,8 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
 {
     NSAssert([self class] != [SLKTextViewController class], @"Oops! You must subclass SLKTextViewController.");
     
-    if (self = [super initWithCoder:decoder])
+    self = [super initWithCoder:decoder];
+    if (self)
     {
         UITableViewStyle tableViewStyle = [[self class] tableViewStyleForCoder:decoder];
         UICollectionViewLayout *collectionViewLayout = [[self class] collectionViewLayoutForCoder:decoder];
@@ -183,10 +188,10 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
 {
     [super loadView];
     
-    if (_childCollectionController) {
-        [self addChildViewController:_childCollectionController];
-        [self.view addSubview:_childCollectionController.collectionView];
-        [_childCollectionController didMoveToParentViewController:self];
+    if (self.childViewController) {
+        [self addChildViewController:self.childViewController];
+        [self.view addSubview:self.childViewController.view];
+        [self.childViewController didMoveToParentViewController:self];
     }
     else {
         [self.view addSubview:self.scrollViewProxy];
@@ -624,6 +629,9 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
     if ([_scrollViewProxy isEqual:scrollView]) {
         return;
     }
+    
+    // Makes sure the scrollView plays nice with auto-layout
+    scrollView.translatesAutoresizingMaskIntoConstraints = NO;
     
     _singleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(slk_didTapScrollView:)];
     _singleTapGesture.delegate = self;

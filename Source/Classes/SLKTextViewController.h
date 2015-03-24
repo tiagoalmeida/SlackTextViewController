@@ -46,16 +46,17 @@ typedef NS_ENUM(NSUInteger, SLKKeyboardStatus) {
 /** @name A drop-in UIViewController subclass with a growing text input view and other useful messaging features. */
 NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController <UITextViewDelegate, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UIGestureRecognizerDelegate, UIAlertViewDelegate>
 
-@property (nonatomic, strong) UICollectionViewController *childCollectionController;
-
-/** The main table view managed by the controller object. Created by default initializing with -init or initWithNibName:bundle: */
+/** A table view used for the main content. Created by default when initialised with -init or -initWithNibName:bundle: or +new. Not nil if the controller is initialised with -initWithTableViewStyle: */
 @property (nonatomic, readonly) UITableView *tableView;
 
-/** The main collection view managed by the controller object. Not nil if the controller is initialised with -initWithCollectionViewLayout: */
+/** A collection view used for the main content. Not nil if the controller is initialised with -initWithCollectionViewLayout: */
 @property (nonatomic, readonly) UICollectionView *collectionView;
 
-/** The main scroll view managed by the controller object. Not nil if the controller is initialised with -initWithScrollView: */
+/** A scroll view used for the main content. Not nil if the controller is initialised with -initWithScrollView: */
 @property (nonatomic, readonly) UIScrollView *scrollView;
+
+/** A child view controller used as the main content controller. Not nil if the controller is initialised with -initWithChildViewController: */
+@property (nonatomic, readonly) UIViewController *childViewController;
 
 /** The bottom toolbar containing a text view and buttons. */
 @property (nonatomic, readonly) SLKTextInputbar *textInputbar;
@@ -110,11 +111,10 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController 
 
 
 #pragma mark - Initialization
+
 ///------------------------------------------------
 /// @name Initialization
 ///------------------------------------------------
-
-- (instancetype)initWithChildCollectionController:(UICollectionViewController *)childCollectionController;
 
 /**
  Initializes a text view controller to manage a table view of a given style.
@@ -135,12 +135,20 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController 
 - (instancetype)initWithCollectionViewLayout:(UICollectionViewLayout *)layout SLK_DESIGNATED_INITIALIZER;
 
 /**
- Initializes a text view controller to manage an arbitraty scroll view. The caller is responsible for configuration of the scroll view, including wiring the delegate.
+ Initializes a text view controller to manage an arbitraty scroll view. The caller is responsible for the configuration of the scroll view, including wiring the delegate.
 
- @param a UISCrollView to be used as the main content area.
+ @param scrollView A UIScrollView to be used as the main content area.
  @return An initialized SLKTextViewController object or nil if the object could not be created.
  */
 - (instancetype)initWithScrollView:(UIScrollView *)scrollView SLK_DESIGNATED_INITIALIZER;
+
+/**
+ Initializes a text view controller to manage an arbitraty child view controller. The caller is responsible for the configuration of the view controller.
+ 
+ @param childViewController A UITableViewController or UICollectionViewController instance to be used as the main content controller.
+ @return An initialized SLKTextViewController object or nil if the object could not be created.
+ */
+- (instancetype)initWithChildViewController:(UIViewController *)childViewController NS_DESIGNATED_INITIALIZER;
 
 /**
  Initializes either a table or collection view controller.
