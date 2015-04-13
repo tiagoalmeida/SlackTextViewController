@@ -35,6 +35,7 @@ static NSString *MessengerCellIdentifier = @"MessengerCell";
     self.messages = [[NSMutableArray alloc] initWithArray:array];
 }
 
+
 #pragma mark - UITableViewDataSource Methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -58,6 +59,7 @@ static NSString *MessengerCellIdentifier = @"MessengerCell";
     
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:MessengerCellIdentifier];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     
     Message *message = self.messages[indexPath.row];
@@ -76,14 +78,6 @@ static NSString *MessengerCellIdentifier = @"MessengerCell";
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return 60.0;
-}
-
-
-#pragma mark - UITableViewDelegate Methods
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    
 }
 
 @end

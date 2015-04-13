@@ -129,17 +129,17 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
     return self;
 }
 
-- (instancetype)initWithChildViewController:(UIViewController *)childViewController
+- (instancetype)initWithChildViewController:(UIViewController *)viewController
 {
     NSAssert([self class] != [SLKTextViewController class], @"Oops! You must subclass SLKTextViewController.");
-    NSAssert(([self class] != [UITableViewController class] && [self class] != [UICollectionViewController class]), @"Oops! You must pass either a UITableViewController or UICollectionViewController instance.");
+    NSAssert(([viewController class] != [UITableViewController class] && [viewController class] != [UICollectionViewController class]), @"Oops! You must pass either a UITableViewController or UICollectionViewController instance.");
     
     self = [super initWithNibName:nil bundle:nil];
     if (self)
     {
-        _childViewController = childViewController;
+        _childViewController = viewController;
         
-        self.scrollViewProxy = (UIScrollView *)childViewController.view;
+        self.scrollViewProxy = (UIScrollView *)viewController.view;
         
         [self slk_commonInit];
     }
@@ -193,10 +193,8 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
         [self.view addSubview:self.childViewController.view];
         [self.childViewController didMoveToParentViewController:self];
     }
-    else {
-        [self.view addSubview:self.scrollViewProxy];
-    }
     
+    [self.view addSubview:self.scrollViewProxy];
     [self.view addSubview:self.autoCompletionView];
     [self.view addSubview:self.typingIndicatorView];
     [self.view addSubview:self.textInputbar];

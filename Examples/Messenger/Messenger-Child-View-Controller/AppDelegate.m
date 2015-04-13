@@ -26,6 +26,7 @@
     ChildViewController *childVC = [[ChildViewController alloc] initWithStyle:UITableViewStylePlain];
 
     MessageViewController *messageVC = [[MessageViewController alloc] initWithChildViewController:childVC];
+    messageVC.inverted = YES;
     [messageVC registerClassForTextView:[MessageTextView class]];
     
     self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:messageVC];
