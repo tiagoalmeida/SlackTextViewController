@@ -190,9 +190,7 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
         // Reloads any cached text
         [self slk_reloadTextView];
     }];
-    
-    // Helps laying out subviews with recently added constraints.
-    [self.view layoutIfNeeded];
+	
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -202,6 +200,9 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
     [self.scrollViewProxy flashScrollIndicators];
     
     self.isViewVisible = YES;
+	
+	// Helps laying out subviews with recently added constraints.
+	[self.view layoutIfNeeded];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
